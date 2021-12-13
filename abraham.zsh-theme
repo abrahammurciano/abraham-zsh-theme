@@ -1,17 +1,24 @@
 # vim:ft=zsh ts=2 sw=2 sts=2
 #
-# agnoster's Theme - https://gist.github.com/3712874
+# abraham's Theme
 # A Powerline-inspired theme for ZSH
 #
 # # README
 #
 # In order for this theme to render correctly, you will need a
-# [Powerline-patched font](https://gist.github.com/1595572).
+# [Powerline-patched font](https://github.com/Lokaltog/powerline-fonts).
+# Make sure you have a recent version: the code points that Powerline
+# uses changed in 2012, and older versions will display incorrectly,
+# in confusing ways.
 #
 # In addition, I recommend the
 # [Solarized theme](https://github.com/altercation/solarized/) and, if you're
-# using it on Mac OS X, [iTerm 2](http://www.iterm2.com/) over Terminal.app -
+# using it on Mac OS X, [iTerm 2](https://iterm2.com/) over Terminal.app -
 # it has significantly better color fidelity.
+#
+# If using with "light" variant of the Solarized color schema, set
+# SOLARIZED_THEME variable to "light". If you don't specify, we'll assume
+# you're using the "dark" variant.
 #
 # # Goals
 #
@@ -22,9 +29,10 @@
 # jobs are running in this shell will all be displayed automatically when
 # appropriate.
 
-### Segments of the prompt, default order declaration
+### Segment drawing
+# A few utility functions to make it easy and re-usable to draw segmented prompts
 
-typeset -aHg AGNOSTER_PROMPT_SEGMENTS=(
+typeset -aHg ABRAHAM_PROMPT_SEGMENTS=(
     prompt_status
     prompt_context
     prompt_virtualenv
@@ -46,7 +54,6 @@ SEGMENT_SEPARATOR="\ue0b0"
 PLUSMINUS="\u00b1"
 BRANCH="\ue0a0"
 DETACHED="\u27a6"
-CROSS="\u2718"
 LIGHTNING="\u26a1"
 GEAR="\u2699"
 
@@ -80,17 +87,31 @@ prompt_end() {
 ### Prompt components
 # Each component will draw itself, and hide itself if no information needs to be shown
 
-# Context: user@hostname (who am I and where am I)
+# Context:
+# - If in an SSH session, show "SSH" and the remote hostname
+# - If not logged in as $DEFAULT_USER, show the username
 prompt_context() {
   local user=`whoami`
+  local context=
 
-  if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
-    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@%m "
+  if [[ -n "$SSH_CONNECTION" ]]; then
+    prompt_segment green black " SSH "
+  fi
+
+  if [[ "$user" != "$DEFAULT_USER" ]]; then
+    context="$user@%m"
+  elif [[ -n "$SSH_CONNECTION" ]]; then
+    context="%m"
+  fi
+
+  if [[ -n "$context" ]]; then
+    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$context "
   fi
 }
 
 # Git: branch/detached head, dirty status
 prompt_git() {
+  [[ $PROMPT_HIDE_GIT = 1 ]] && return
   local color ref
   is_dirty() {
     test -n "$(git status --porcelain --ignore-submodules)"
@@ -115,18 +136,26 @@ prompt_git() {
 }
 
 # Dir: current working directory
+# blue by default, red if previous command exited with non-zero status
 prompt_dir() {
-  prompt_segment blue $PRIMARY_FG ' %~ '
+  local -a background
+  local -a foreground
+  if [[ $RETVAL -ne 0 ]]; then
+    background=red
+    foreground=white
+  else
+    background=blue
+    foreground=$PRIMARY_FG
+  fi
+  prompt_segment $background $foreground ' %~ '
 }
 
 # Status:
-# - was there an error
 # - am I root
 # - are there background jobs?
 prompt_status() {
   local symbols
   symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}$CROSS"
   [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}$LIGHTNING"
   [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$GEAR"
 
@@ -143,26 +172,26 @@ prompt_virtualenv() {
 }
 
 ## Main prompt
-prompt_agnoster_main() {
+prompt_abraham_main() {
   RETVAL=$?
   CURRENT_BG='NONE'
-  for prompt_segment in "${AGNOSTER_PROMPT_SEGMENTS[@]}"; do
+  for prompt_segment in "${ABRAHAM_PROMPT_SEGMENTS[@]}"; do
     [[ -n $prompt_segment ]] && $prompt_segment
   done
 }
 
-prompt_agnoster_precmd() {
+prompt_abraham_precmd() {
   vcs_info
-  PROMPT='%{%f%b%k%}$(prompt_agnoster_main) '
+  PROMPT='%{%f%b%k%}$(prompt_abraham_main) '
 }
 
-prompt_agnoster_setup() {
+prompt_abraham_setup() {
   autoload -Uz add-zsh-hook
   autoload -Uz vcs_info
 
   prompt_opts=(cr subst percent)
 
-  add-zsh-hook precmd prompt_agnoster_precmd
+  add-zsh-hook precmd prompt_abraham_precmd
 
   zstyle ':vcs_info:*' enable git
   zstyle ':vcs_info:*' check-for-changes false
@@ -170,4 +199,4 @@ prompt_agnoster_setup() {
   zstyle ':vcs_info:git*' actionformats '%b (%a)'
 }
 
-prompt_agnoster_setup "$@"
+prompt_abraham_setup "$@"
