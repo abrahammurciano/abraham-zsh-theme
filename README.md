@@ -4,14 +4,34 @@ A ZSH theme based on [Agnoster](https://github.com/agnoster/agnoster-zsh-theme)
 
 # Installation
 
-## Oh My ZSH
-
-If you have [Oh My Zsh](https://github.com/ohmyzsh/ohmyzsh):
+Run this command.
 
 ```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/abrahammurciano/abraham-zsh-theme/master/install.sh)"
+zsh -c "$(curl -fsSL https://raw.githubusercontent.com/abrahammurciano/abraham-zsh-theme/master/install.sh)"
 ```
 
+If you have [Oh My Zsh](https://github.com/ohmyzsh/ohmyzsh), set the following in your `.zshrc`:
+
+```
+ZSH_THEME="abraham"
+```
+Otherwise, add the following line to your `.zshrc`:
+```
+source path/to/abraham.zsh-theme
+```
+
+## Settings
+
+To hide the username part of the prompt for a default user, add this line to your `~/.zprofile`:
+```
+export DEFAULT_USER=yourusername
+```
+
+To disable the git part of the prompt (e.g. if you work with massive git repos), add this line to your `~/.zprofile`:
+```
+export ABRAHAM_PROMPT_SEGMENTS=( "${ABRAHAM_PROMPT_SEGMENTS[@]/(prompt_git)}" )
+```
+Other parts of the prompt can be removed in the same manner.
 
 # Compatibility
 
