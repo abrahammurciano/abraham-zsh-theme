@@ -61,36 +61,36 @@ The result should look like this:
 
 By default prompt has these segments: `prompt_status`, `prompt_context`, `prompt_virtualenv`, `prompt_dir`, `prompt_git`, `prompt_end` in that particular order.
 
-If you want to add, change the order or remove some segments of the prompt, you can use array environment variable named `AGNOSTER_PROMPT_SEGMENTS`.
+If you want to add, change the order or remove some segments of the prompt, you can use array environment variable named `ABRAHAM_PROMPT_SEGMENTS`.
 
 Examples:
 - Show all segments of the prompt with indices:
 ```
-echo "${(F)AGNOSTER_PROMPT_SEGMENTS[@]}" | cat -n
+echo "${(F)ABRAHAM_PROMPT_SEGMENTS[@]}" | cat -n
 ```
 - Add the new segment of the prompt to the beginning:
 ```
-AGNOSTER_PROMPT_SEGMENTS=("prompt_git" "${AGNOSTER_PROMPT_SEGMENTS[@]}")
+ABRAHAM_PROMPT_SEGMENTS=("prompt_git" "${ABRAHAM_PROMPT_SEGMENTS[@]}")
 ```
 - Add the new segment of the prompt to the end:
 ```
-AGNOSTER_PROMPT_SEGMENTS+="prompt_end"
+ABRAHAM_PROMPT_SEGMENTS+="prompt_end"
 ```
 - Insert the new segment of the prompt = `PROMPT_SEGMENT_NAME` on the particular position = `PROMPT_SEGMENT_POSITION`:
 ```
 PROMPT_SEGMENT_POSITION=5 PROMPT_SEGMENT_NAME="prompt_end";\
-AGNOSTER_PROMPT_SEGMENTS=("${AGNOSTER_PROMPT_SEGMENTS[@]:0:$PROMPT_SEGMENT_POSITION-1}" "$PROMPT_SEGMENT_NAME" "${AGNOSTER_PROMPT_SEGMENTS[@]:$PROMPT_SEGMENT_POSITION-1}");\
+ABRAHAM_PROMPT_SEGMENTS=("${ABRAHAM_PROMPT_SEGMENTS[@]:0:$PROMPT_SEGMENT_POSITION-1}" "$PROMPT_SEGMENT_NAME" "${ABRAHAM_PROMPT_SEGMENTS[@]:$PROMPT_SEGMENT_POSITION-1}");\
 unset PROMPT_SEGMENT_POSITION PROMPT_SEGMENT_NAME
 ```
 - Swap segments 4th and 5th:
 ```
 SWAP_SEGMENTS=(4 5);\
-TMP_VAR="$AGNOSTER_PROMPT_SEGMENTS[$SWAP_SEGMENTS[1]]"; AGNOSTER_PROMPT_SEGMENTS[$SWAP_SEGMENTS[1]]="$AGNOSTER_PROMPT_SEGMENTS[$SWAP_SEGMENTS[2]]"; AGNOSTER_PROMPT_SEGMENTS[$SWAP_SEGMENTS[2]]="$TMP_VAR"
+TMP_VAR="$ABRAHAM_PROMPT_SEGMENTS[$SWAP_SEGMENTS[1]]"; ABRAHAM_PROMPT_SEGMENTS[$SWAP_SEGMENTS[1]]="$ABRAHAM_PROMPT_SEGMENTS[$SWAP_SEGMENTS[2]]"; ABRAHAM_PROMPT_SEGMENTS[$SWAP_SEGMENTS[2]]="$TMP_VAR"
 unset SWAP_SEGMENTS TMP_VAR
 ```
 - Remove the 5th segment:
 ```
-AGNOSTER_PROMPT_SEGMENTS[5]=
+ABRAHAM_PROMPT_SEGMENTS[5]=
 ```
 
 A small demo of the dummy custom prompt segment, which has been created with help of the built-in `prompt_segment()` function from Agnoster theme:
@@ -98,7 +98,7 @@ A small demo of the dummy custom prompt segment, which has been created with hel
 # prompt_segment() - Takes two arguments, background and foreground.
 # Both can be omitted, rendering default background/foreground.
 
-customize_agnoster() {
+customize_abraham() {
   prompt_segment 'red' '' ' ⚙ ⚡⚡⚡ ⚙  '
 }
 ```
