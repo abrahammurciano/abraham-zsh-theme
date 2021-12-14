@@ -111,7 +111,6 @@ prompt_context() {
 
 # Git: branch/detached head, dirty status
 prompt_git() {
-  [[ $PROMPT_HIDE_GIT = 1 ]] && return
   local color ref
   is_dirty() {
     test -n "$(git status --porcelain --ignore-submodules)"
