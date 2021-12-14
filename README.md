@@ -20,18 +20,21 @@ Otherwise, add the following line to your `.zshrc`:
 source path/to/abraham.zsh-theme
 ```
 
-## Settings
+# Settings
 
-To hide the username part of the prompt for a default user, add this line to your `~/.zprofile`:
+Settings can be configured by exporting variables in you `~/.zprofile`.
+
+To hide the username part of the prompt for a default user:
 ```
 export DEFAULT_USER=yourusername
 ```
 
-To disable the git part of the prompt (e.g. if you work with massive git repos), add this line to your `~/.zprofile`:
+The prompt consists of several sections. You can see which sections exist and their order by running `echo $ABRAHAM_PROMPT_SEGMENT`. You may modify this array to customize your prompt somewhat (change section order, remove a section, etc).
+
+For example, to disable the git part of the prompt (e.g. if you work with massive git repos):
 ```
 export ABRAHAM_PROMPT_SEGMENTS=( "${ABRAHAM_PROMPT_SEGMENTS[@]/(prompt_git)}" )
 ```
-Other parts of the prompt can be removed in the same manner.
 
 # Compatibility
 
